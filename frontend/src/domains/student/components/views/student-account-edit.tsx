@@ -53,6 +53,9 @@ export const StudentAccountEdit: React.FC<StudentAccountEditProps> = ({
       ][]) {
         if (['admissionDate', 'dob'].includes(key)) {
           setValue(key, typeof value === 'string' ? parseISO(value) : value);
+        } else if (key === 'roll') {
+          // the API returns roll as a number; the form field is a string
+          setValue(key, String(value));
         } else {
           setValue(key, value);
         }

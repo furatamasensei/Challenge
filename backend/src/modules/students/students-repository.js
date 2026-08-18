@@ -98,6 +98,26 @@ const findStudentToSetStatus = async ({ userId, reviewerId, status }) => {
     return rowCount
 }
 
+const deleteStudentById = async (id) => {
+    // every FK into users is ON DELETE NO ACTION, so the rows the student owns
+    // must go first. A single statement keeps it atomic without a transaction helper.
+    const query = `
+        WITH deleted_profile AS (
+            DELETE FROM user_profiles WHERE user_id = $1
+        ), deleted_leave_policy AS (
+            DELETE FROM user_leave_policy WHERE user_id = $1
+        ), deleted_leaves AS (
+            DELETE FROM user_leaves WHERE user_id = $1
+        ), deleted_tokens AS (
+            DELETE FROM user_refresh_tokens WHERE user_id = $1
+        )
+        DELETE FROM users WHERE id = $1
+    `;
+    const queryParams = [id];
+    const { rowCount } = await processDBRequest({ query, queryParams });
+    return rowCount;
+}
+
 const findStudentToUpdate = async (paylaod) => {
     const { basicDetails: { name, email }, id } = paylaod;
     const currentDate = new Date();
@@ -117,5 +137,6 @@ module.exports = {
     addOrUpdateStudent,
     findStudentDetail,
     findStudentToSetStatus,
-    findStudentToUpdate
+    findStudentToUpdate,
+    deleteStudentById
 };

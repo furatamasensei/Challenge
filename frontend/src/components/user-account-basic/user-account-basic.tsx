@@ -1,6 +1,15 @@
 import * as React from 'react';
 import { Box, ListItemIcon, ListItemText, MenuItem, Paper, Typography } from '@mui/material';
-import { Block, CheckCircle, Edit, Email, Key, LockReset, Visibility } from '@mui/icons-material';
+import {
+  Block,
+  CheckCircle,
+  Delete,
+  Edit,
+  Email,
+  Key,
+  LockReset,
+  Visibility
+} from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
@@ -109,7 +118,17 @@ export const UserAccountBasic = ({ data }: { data: UserAccountBasicDataProps }) 
       action: 'RESET_USER_PWD',
       icon: <LockReset />,
       text: 'Reset Password'
-    }
+    },
+    // staff has no delete endpoint, so this stays student-only
+    ...(userType === 'student'
+      ? [
+          {
+            action: 'DELETE_STUDENT',
+            icon: <Delete />,
+            text: 'Delete'
+          }
+        ]
+      : [])
   ];
   const table = useMaterialReactTable({
     data: isError ? [] : users || [],

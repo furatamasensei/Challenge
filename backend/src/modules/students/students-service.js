@@ -1,5 +1,5 @@
 const { ApiError, sendAccountVerificationEmail } = require("../../utils");
-const { findAllStudents, findStudentDetail, findStudentToSetStatus, addOrUpdateStudent } = require("./students-repository");
+const { findAllStudents, findStudentDetail, findStudentToSetStatus, addOrUpdateStudent, deleteStudentById } = require("./students-repository");
 const { findUserById } = require("../../shared/repository");
 
 const checkStudentId = async (id) => {
@@ -58,6 +58,17 @@ const updateStudent = async (payload) => {
     return { message: result.message };
 }
 
+const deleteStudent = async (id) => {
+    await checkStudentId(id);
+
+    const affectedRow = await deleteStudentById(id);
+    if (affectedRow <= 0) {
+        throw new ApiError(500, "Unable to delete student");
+    }
+
+    return { message: "Student deleted successfully" };
+}
+
 const setStudentStatus = async ({ userId, reviewerId, status }) => {
     await checkStudentId(userId);
 
@@ -75,4 +86,5 @@ module.exports = {
     addNewStudent,
     setStudentStatus,
     updateStudent,
+    deleteStudent,
 };

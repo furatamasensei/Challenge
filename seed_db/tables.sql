@@ -205,6 +205,13 @@ DECLARE
     _reporterId INTEGER;
 BEGIN
     _userId := COALESCE((data ->>'userId')::INTEGER, NULL);
+
+    IF _userId IS NULL THEN
+        _operationType := 'add';
+    ELSE
+        _operationType := 'update';
+    END IF;
+
     _name := COALESCE(data->>'name', NULL);
     _role := COALESCE((data->>'role')::INTEGER, NULL);
     _gender := COALESCE(data->>'gender', NULL);
@@ -222,12 +229,6 @@ BEGIN
     _emergencyPhone := COALESCE(data->>'emergencyPhone', NULL);
     _systemAccess := COALESCE((data->>'systemAccess')::BOOLEAN, NULL);
     _reporterId := COALESCE((data->>'reporterId')::INTEGER, NULL);
-
-    IF _userId IS NULL THEN
-        _operationType := 'add';
-    ELSE
-        _operationType := 'update';
-    END IF;
 
     IF _role = 3 THEN
         RETURN QUERY
@@ -329,6 +330,13 @@ DECLARE
 BEGIN
     _roleId = 3;
     _userId := COALESCE((data ->>'userId')::INTEGER, NULL);
+
+    IF _userId IS NULL THEN
+        _operationType := 'add';
+    ELSE
+        _operationType := 'update';
+    END IF;
+
     _name := COALESCE(data->>'name', NULL);
     _gender := COALESCE(data->>'gender', NULL);
     _phone := COALESCE(data->>'phone', NULL);
@@ -348,12 +356,6 @@ BEGIN
     _sectionName := COALESCE(data->>'section', NULL);
     _admissionDt := COALESCE((data->>'admissionDate')::DATE, NULL);
     _roll := COALESCE((data->>'roll')::INTEGER, NULL);
-
-    IF _userId IS NULL THEN
-        _operationType := 'add';
-    ELSE
-        _operationType := 'update';
-    END IF;
 
     SELECT teacher_id
     FROM class_teachers
